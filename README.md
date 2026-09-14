@@ -32,6 +32,7 @@ Before running the application, make sure you have:
 - JDK 17 or newer;
 - PostgreSQL;
 - Maven, or the included Maven Wrapper: `mvnw` / `mvnw.cmd`.
+- Docker, optional, if you want to run PostgreSQL in a container.
 
 ## Database Setup
 
@@ -62,6 +63,36 @@ spring.jpa.hibernate.ddl-auto=update
 ```
 
 This means the database schema will be created or updated automatically when the application starts.
+
+## Running PostgreSQL with Docker
+
+The project does not include a `Dockerfile` or `docker-compose.yml` for the Spring Boot application. However, you can run the required PostgreSQL database with Docker:
+
+```bash
+docker run --name senseipostgres \
+  -e POSTGRES_DB=senseipostgres \
+  -e POSTGRES_USER=assanali \
+  -e POSTGRES_PASSWORD=12345678 \
+  -p 5432:5432 \
+  -d postgres:14
+```
+
+On Windows PowerShell:
+
+```powershell
+docker run --name senseipostgres `
+  -e POSTGRES_DB=senseipostgres `
+  -e POSTGRES_USER=assanali `
+  -e POSTGRES_PASSWORD=12345678 `
+  -p 5432:5432 `
+  -d postgres:14
+```
+
+If the container already exists, start it with:
+
+```bash
+docker start senseipostgres
+```
 
 ## Running the Application
 
