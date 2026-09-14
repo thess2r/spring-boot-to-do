@@ -1,29 +1,166 @@
-# Spring Boot To Do
+# Spring Boot To-Do List
 
-## Getting Started
+Web application for managing a personal to-do list. Users can register, sign in, add tasks, mark them as completed, delete them, and filter tasks by status. The project also includes administrator roles for user management.
 
-### Reference Documentation
-For further reference, please consider the following sections:
+## Features
 
-* [Official Apache Maven documentation](https://maven.apache.org/guides/index.html)
-* [Spring Boot Maven Plugin Reference Guide](https://docs.spring.io/spring-boot/4.1.0/maven-plugin)
-* [Create an OCI image](https://docs.spring.io/spring-boot/4.1.0/maven-plugin/build-image.html)
-* [Spring Web](https://docs.spring.io/spring-boot/4.1.0/reference/web/servlet.html)
-* [Spring Data JPA](https://docs.spring.io/spring-boot/4.1.0/reference/data/sql.html#data.sql.jpa-and-spring-data)
-* [Thymeleaf](https://docs.spring.io/spring-boot/4.1.0/reference/web/servlet.html#web.servlet.spring-mvc.template-engines)
+- registration and login by email;
+- password hashing with BCrypt;
+- personal account page with a user-specific task list;
+- task creation, completion, deletion, and filtering;
+- user roles: `USER`, `ADMIN`, `SUPER_ADMIN`;
+- admin panel for deleting users;
+- user promotion to administrator for `SUPER_ADMIN`;
+- server-rendered HTML pages with Thymeleaf;
+- custom pages for common errors.
 
-### Guides
-The following guides illustrate how to use some features concretely:
+## Tech Stack
 
-* [Building a RESTful Web Service](https://spring.io/guides/gs/rest-service/)
-* [Serving Web Content with Spring MVC](https://spring.io/guides/gs/serving-web-content/)
-* [Building REST services with Spring](https://spring.io/guides/tutorials/rest/)
-* [Accessing Data with JPA](https://spring.io/guides/gs/accessing-data-jpa/)
-* [Handling Form Submission](https://spring.io/guides/gs/handling-form-submission/)
+- Java 17
+- Spring Boot 2.6.15
+- Spring MVC
+- Spring Security
+- Spring Data JPA / Hibernate
+- Thymeleaf
+- PostgreSQL
+- Maven
 
-### Maven Parent overrides
+## Requirements
 
-Due to Maven's design, elements are inherited from the parent POM to the project POM.
-While most of the inheritance is fine, it also inherits unwanted elements like `<license>` and `<developers>` from the parent.
-To prevent this, the project POM contains empty overrides for these elements.
-If you manually switch to a different parent and actually want the inheritance, you need to remove those overrides.
+Before running the application, make sure you have:
+
+- JDK 17 or newer;
+- PostgreSQL;
+- Maven, or the included Maven Wrapper: `mvnw` / `mvnw.cmd`.
+
+## Database Setup
+
+By default, the application connects to PostgreSQL using these settings:
+
+```properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/senseipostgres
+spring.datasource.username=assanali
+spring.datasource.password=12345678
+```
+
+Create the database:
+
+```sql
+CREATE DATABASE senseipostgres;
+```
+
+If your database name, username, or password is different, update:
+
+```text
+src/main/resources/application.properties
+```
+
+Hibernate is configured with:
+
+```properties
+spring.jpa.hibernate.ddl-auto=update
+```
+
+This means the database schema will be created or updated automatically when the application starts.
+
+## Running the Application
+
+On Windows:
+
+```bash
+./mvnw.cmd spring-boot:run
+```
+
+On Linux/macOS:
+
+```bash
+./mvnw spring-boot:run
+```
+
+After startup, the application will be available at:
+
+```text
+http://localhost:8080
+```
+
+## Build
+
+Build the project:
+
+```bash
+./mvnw.cmd clean package
+```
+
+Run the generated JAR:
+
+```bash
+java -jar target/to-do-list-application-0.0.1.jar
+```
+
+## Tests
+
+Run tests:
+
+```bash
+./mvnw.cmd test
+```
+
+The project currently includes a basic Spring context loading test.
+
+## Main Pages
+
+| URL | Access | Description |
+| --- | --- | --- |
+| `/` | public | home page |
+| `/registration` | public | registration page |
+| `/login` | public | login page |
+| `/account` | `USER`, `ADMIN`, `SUPER_ADMIN` | personal account and tasks |
+| `/account?filter=active` | `USER`, `ADMIN`, `SUPER_ADMIN` | active tasks |
+| `/account?filter=done` | `USER`, `ADMIN`, `SUPER_ADMIN` | completed tasks |
+| `/admin` | `ADMIN`, `SUPER_ADMIN` | user management |
+| `/super-admin/make-user-admin` | `SUPER_ADMIN` | promote a user to administrator |
+
+## Project Structure
+
+```text
+src/main/java/com/sensei
+├── config          # Spring Security configuration
+├── controller      # MVC controllers
+├── entity          # JPA entities and enums
+├── repository      # Spring Data JPA repositories
+└── service         # Business logic
+
+src/main/resources
+├── static/css      # Page styles
+├── templates       # Thymeleaf templates
+└── application.properties
+```
+
+## Roles
+
+`USER` can manage their own task list.
+
+`ADMIN` can access the admin panel and delete regular users.
+
+`SUPER_ADMIN` can delete regular users and administrators, and can promote regular users to the `ADMIN` role.
+
+## Development Notes
+
+- Authentication uses email instead of username.
+- New users receive the `USER` role after registration.
+- New tasks are created with the `ACTIVE` status.
+- Completed tasks receive the `DONE` status.
+- CSRF protection is disabled in the current security configuration.
+
+## Useful Commands
+
+```bash
+# Run the application
+./mvnw.cmd spring-boot:run
+
+# Run tests
+./mvnw.cmd test
+
+# Build the project
+./mvnw.cmd clean package
+```
